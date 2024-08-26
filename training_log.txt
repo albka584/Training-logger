@@ -1,7 +1,7 @@
 {"name": "Mark", "sets": [[105, 1, 1]], "date": "01/07/24", "Exercsise count: ": 1}
-{"name": "Mark", "sets": [[120, 1, 1]], "date": "02/07/24", "Exercsise count: ": 1}
 {"name": "Mark", "sets": [[140, 1, 1]], "date": "03/07/24", "Exercsise count: ": 1}
-{"name": "Mark", "sets": [[150, 1, 1]], "date": "04/07/24", "Exercsise count: ": 1}
+{"name": "Mark", "sets": [[120, 1, 1]], "date": "04/07/24", "Exercsise count: ": 1}
+{"name": "Mark", "sets": [[150, 1, 1]], "date": "05/07/24", "Exercsise count: ": 1}
 {"name": "Mark", "sets": [[160, 10, 1]], "date": "06/07/24", "Exercsise count: ": 1}
 {"name": "Mark", "sets": [[170, 1, 1]], "date": "07/07/24", "Exercsise count: ": 1}
 {"name": "Mark", "sets": [[180, 10, 1]], "date": "08/07/24", "Exercsise count: ": 1}

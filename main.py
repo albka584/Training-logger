@@ -12,9 +12,6 @@ class Traininglog:
         self.filename = filename
         self.data = self.load_data()
 
-#idag, fixa add sets loopen
-# fixa sort data, och self.count_exercsises_today
-
     def add_excersise_gym(self, name, sets, date):
         i = self.count_exercises_today() # skriva self. för att få tag på funk
         exercise = {'name' : name, 'sets' : sets, 'date' : date, 'Exercsise count: ': i}
@@ -38,8 +35,9 @@ class Traininglog:
         for j in data['sets']:
             print(f"set: {j[2]}, weight: {j[0]} kgs, reps: {j[1]}")
 
-    def show_exercise(self,data): # här kan vi också ha en jävla massa val. vilken dag osv man vill kika
-        for i in data:
+    def show_exercise(self): # här kan vi också ha en jävla massa val. vilken dag osv man vill kika
+        self.sort_dates()
+        for i in self.data:
             for j in i['sets']:
                 print(f"{i['date']}, {i['name']}, set: {j[2]}, weight: {j[0]} kgs, reps: {j[1]}")
 
@@ -59,7 +57,7 @@ class Traininglog:
                     i+=1
             return i 
         
-    def remove_exercies(self,date_idx): 
+    def remove_exercies(self,date_idx): # kanske går att göra denna mkt enklare?
         with open(self.filename, 'r') as g:
             lines = g.readlines()
 
@@ -181,6 +179,10 @@ def add_sets():
 #lägga in så man kan köra back eller quit överallt
 
 while True:
+    unique_names=set()
+    for i in Training_log.data:
+        unique_names.add(i["name"])
+
     main_menu()
     command = input()
 
@@ -201,6 +203,12 @@ while True:
                 Training_log.add_excersise_gym(name, sets, today)
         if new_command == '2':
             os.system('cls')
+            Training_log.sort_dates() # problem: hur sorterar jag datumen korrekt här? 
+            # vill kalla på metoden sort dates, frågan är om jag ska göra det innan
+            unique_dates = set(i["date"] for i in Training_log.data)
+            
+            print(unique_dates)
+
             print('[Enter: dagens datum] [mm/dd/yy]')
             date = input("Välj datum: ")
             try:
@@ -218,15 +226,10 @@ while True:
                     
     if command == '2':
         os.system('cls')
-        Training_log.show_exercise(Training_log.data) 
+        Training_log.show_exercise() 
     if command == '3':
         #os.system('cls')
-        unique_names=set()
-        for i in Training_log.data:
-            unique_names.add(i["name"])
-        for i in unique_names:
-            print(i)
-
+        print(unique_names)
         name = input("Välj övning: ") 
         for idx,item in enumerate(Training_log.data, start=1):
             if item["name"] == name:
@@ -250,6 +253,7 @@ while True:
     if command == '4':
         os.system('cls')
         while True:
+            print(unique_names)
             name_exercsise = input("Välj övning: ")
             data_log=[]
             found = False
@@ -303,3 +307,9 @@ while True:
         pass
 
 
+# hantera lite fel fall
+# fixa back knapp och quit närsom?
+
+
+
+# lägg till löpning?

@@ -3,18 +3,14 @@ import json
 import os
 import matplotlib.pyplot as plt
 
-# fel på exercise counten
-# fel om man lägger till flera sets på en och samma dag
-# går ej plotta graf om man bara har 1 övning, ska ej gå då!
-
 class Traininglog:
     def __init__(self, filename):
         self.filename = filename
         self.data = self.load_data()
+        self.sort_dates()
 
-    def add_excersise_gym(self, name, sets, date):
-        i = self.count_exercises_today() # skriva self. för att få tag på funk
-        exercise = {'name' : name, 'sets' : sets, 'date' : date, 'Exercsise count: ': i}
+    def add_exercise_gym(self, name, sets, date):
+        exercise = {'name' : name, 'sets' : sets, 'date' : date}
 
         for item in self.data:
             last_set = item['sets'][-1][2]
@@ -30,13 +26,13 @@ class Traininglog:
     
     def sort_dates(self):
         self.data = sorted(self.data, key=lambda date: datetime.strptime(date["date"], "%d/%m/%y"))
-
+        return self.data
+    
     def show_set(self, data):
         for j in data['sets']:
             print(f"set: {j[2]}, weight: {j[0]} kgs, reps: {j[1]}")
 
     def show_exercise(self): # här kan vi också ha en jävla massa val. vilken dag osv man vill kika
-        self.sort_dates()
         for i in self.data:
             for j in i['sets']:
                 print(f"{i['date']}, {i['name']}, set: {j[2]}, weight: {j[0]} kgs, reps: {j[1]}")
@@ -48,16 +44,8 @@ class Traininglog:
                     json.dump(item,f)
                     f.write('\n')
 
-    def count_exercises_today(self): 
-        with open(self.filename, 'r') as f: 
-            i=1
-            for row in f:
-                exercise = json.loads(row) 
-                if (exercise["date"]) == datetime.today().strftime("%d/%m/%y"):
-                    i+=1
-            return i 
         
-    def remove_exercies(self,date_idx): # kanske går att göra denna mkt enklare?
+    def remove_exercise(self,date_idx): # kanske går att göra denna mkt enklare?
         with open(self.filename, 'r') as g:
             lines = g.readlines()
 
@@ -75,25 +63,25 @@ class Traininglog:
 
     def remove_set(self, chosen_exercise, remove_idx, date_idx):
         sets=[]
-        for i in chosen_exercsise['sets']:
+        for i in chosen_exercise['sets']:
             if i[2] != remove_idx:
                 sets.append(i)
         chosen_exercise['sets'] = sets
         self.save_data()
 
         if not chosen_exercise['sets']:
-            self.remove_exercies(date_idx)
-        # beräkna nu om setnummer
+            self.remove_exercise(date_idx)
+
         for idx,item in enumerate(chosen_exercise['sets'], start=1):
             item[2] = idx
         self.save_data()
 
     def load_data(self):
-        exercsises=[]
+        exercise=[]
         with open(self.filename, 'r') as f:
             for i in f:
-                exercsises.append(json.loads(i))
-        return exercsises
+                exercise.append(json.loads(i))
+        return exercise
 
     def plot_tot_weight(self, date_idx1, date_idx2, data):
         weight=[]
@@ -154,7 +142,6 @@ def main_menu():
 
 def add_sets():
     num_set=0
-
     while True:
         os.system('cls')
         print('Lägg till ett set: Y/N')
@@ -176,8 +163,6 @@ def add_sets():
             os.system('cls')
     return sets, num_set
 
-#lägga in så man kan köra back eller quit överallt
-
 while True:
     unique_names=set()
     for i in Training_log.data:
@@ -191,40 +176,46 @@ while True:
     sets=[]
     if command == "1":
         os.system('cls')
-        print("1. Lägg till en övning") # fixa så man kan lägga in datum också
-        print("2. Välj datum.")
+        print("1. Idag.") # fixa så man kan lägga in datum också
+        print("2. Annat datum.")
         today = datetime.today().strftime("%d/%m/%y")
-        new_command = input()
-        if new_command == '1':
+        command = input()
+        if command == '1':
             os.system('cls')
             name = input('Övningens namn? ')
             sets, num_set = add_sets()
             if sets:
                 Training_log.add_excersise_gym(name, sets, today)
-        if new_command == '2':
+        elif command == '2':
             os.system('cls')
-            Training_log.sort_dates() # problem: hur sorterar jag datumen korrekt här? 
-            # vill kalla på metoden sort dates, frågan är om jag ska göra det innan
-            unique_dates = set(i["date"] for i in Training_log.data)
-            
-            print(unique_dates)
+            print("1. Välj befintlig datum.")
+            print("2. Välj nytt datum.")
+            command = input()
+            if command == '1':
+                dates = list(i["date"] for i in Training_log.data)
+                unique_dates = list(dict.fromkeys(dates)) # gör om till en dict. inga dubbletter i en dict
 
-            print('[Enter: dagens datum] [mm/dd/yy]')
-            date = input("Välj datum: ")
-            try:
-                if date == '':
-                    date = today
-                    name = input("Övningens namn? ")
-                    sets, num_set = add_sets()
-                    Training_log.add_excersise_gym(name, sets, date)
-                elif date == datetime.strptime(date, "%d/%m/%y").strftime("%d/%m/%y"): # raisar exception, strptime
-                    name = input("Övningens namn? ")
-                    sets, num_set = add_sets()
-                    Training_log.add_excersise_gym(name, sets, date)
-            except:
-                print ( ' **** Fel format på datum. Format: [mm/dd/yy] eller tryck Enter ****  \n')
+                for date_idx, date in enumerate(unique_dates,start=1):
+                    print(f"{date_idx}. {date}")
                     
-    if command == '2':
+                date_num = int(input())
+                name = input("Övningens namn? ")
+
+                sets, num_set = add_sets()
+                Training_log.add_exercise_gym(name, sets, unique_dates[date_num-1])
+
+            elif command == '2':
+                print('dd/mm/yy')
+                date = input("Välj datum: ") # typ få en lista med 
+                try:
+                    if date == datetime.strptime(date, "%d/%m/%y").strftime("%d/%m/%y"):
+                        name = input("Övningens namn? ")
+                        sets, num_set = add_sets()
+                        Training_log.add_exercise_gym(name, sets, date)
+                except:
+                    print ( ' **** Fel format på datum. Format: mm/dd/yy ****  \n')
+                    
+    elif command == '2':
         os.system('cls')
         Training_log.show_exercise() 
     if command == '3':
@@ -240,25 +231,25 @@ while True:
             continue
         print("1. Ta bort ett set")
         print("2. Ta bort hela övningen")
-        new_command = input()
-        if new_command == '1':
-            chosen_exercsise = Training_log.data[dates_num-1]
-            Training_log.show_set(chosen_exercsise)
+        command = input()
+        if command == '1':
+            chosen_exercise = Training_log.data[dates_num-1]
+            Training_log.show_set(chosen_exercise)
             remove_idx = int(input("Välj vilket set du vill ta bort: "))
-            Training_log.remove_set(chosen_exercsise, remove_idx, dates_num)
+            Training_log.remove_set(chosen_exercise, remove_idx, dates_num)
 
-        if new_command == '2':
-            Training_log.remove_exercies(dates_num) # fixa så den kan tag bort liksom flera övningar samtidigt
+        if command == '2':
+            Training_log.remove_exercise(dates_num) # fixa så den kan tag bort liksom flera övningar samtidigt
         
     if command == '4':
         os.system('cls')
         while True:
             print(unique_names)
-            name_exercsise = input("Välj övning: ")
+            name_exercise = input("Välj övning: ")
             data_log=[]
             found = False
             for i in Training_log.data:
-                if i["name"] == name_exercsise:
+                if i["name"] == name_exercise:
                     data_log.append(i)
                     found = True
             if found:
@@ -309,7 +300,4 @@ while True:
 
 # hantera lite fel fall
 # fixa back knapp och quit närsom?
-
-
-
 # lägg till löpning?

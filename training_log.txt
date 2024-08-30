@@ -1,8 +1,5 @@
-{"name": "Mark", "sets": [[105, 1, 1]], "date": "01/07/24", "Exercsise count: ": 1}
-{"name": "Mark", "sets": [[140, 1, 1]], "date": "03/07/24", "Exercsise count: ": 1}
-{"name": "Mark", "sets": [[120, 1, 1]], "date": "04/07/24", "Exercsise count: ": 1}
-{"name": "Mark", "sets": [[150, 1, 1]], "date": "05/07/24", "Exercsise count: ": 1}
-{"name": "Mark", "sets": [[160, 10, 1]], "date": "06/07/24", "Exercsise count: ": 1}
-{"name": "Mark", "sets": [[170, 1, 1]], "date": "07/07/24", "Exercsise count: ": 1}
-{"name": "Mark", "sets": [[180, 10, 1]], "date": "08/07/24", "Exercsise count: ": 1}
-{"name": "a", "sets": [[100, 10, 1], [50, 50, 2], [100, 10, 2], [100, 10, 3], [100, 10, 4]], "date": "13/07/24", "Exercsise count: ": 1}
+{"name": "Bajslyft", "sets": [[100, 1, 1], [50, 40, 2]], "date": "24/01/02"}
+{"name": "Snopp", "sets": [[30, 20, 1]], "date": "24/01/02"}
+{"name": "Mark", "sets": [[30, 20, 1], [40, 20, 2]], "date": "28/08/24"}
+{"name": "Mark", "sets": [[100, 10, 1], [50, 40, 2], [20, 10, 3], [30, 20, 4], [50, 60, 5]], "date": "29/08/24"}
+{"name": "Bajs", "sets": [[30, 2, 1]], "date": "29/08/24"}
